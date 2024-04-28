@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:peakstreak/constants/colors.dart';
 import 'package:peakstreak/constants/helper.dart';
 import 'package:peakstreak/screens/home.dart';
+import 'package:peakstreak/services/sharedpreferences/get_opened.dart';
+import 'package:peakstreak/services/sharedpreferences/set_first_time.dart';
 import 'package:peakstreak/widgets/button.dart';
 import 'package:peakstreak/widgets/text.dart';
 
@@ -13,6 +15,19 @@ class Welcome extends StatefulWidget {
 }
 
 class _WelcomeState extends State<Welcome> {
+  void checkOpened()async{
+    var isOpened = await getOpened();
+    if(isOpened){
+      if(!mounted) return;
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: ((context) => const Home())), (route) => false);
+    }
+  }
+
+  @override
+  void initState(){
+    super.initState();
+    checkOpened();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,7 +95,9 @@ class _WelcomeState extends State<Welcome> {
           CustomButton(
               text: Helper.getBetter,
               color: AppColors.dullgreen,
-              onPressed: () {
+              onPressed: () async{
+                await setFirstTime();
+                if(!mounted)return;
                 Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: ((context) => const Home())), (route) => false);
               })
         ],

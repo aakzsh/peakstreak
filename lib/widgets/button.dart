@@ -24,12 +24,12 @@ class _CustomButtonState extends State<CustomButton> {
         onPressed: () {
           widget.onPressed();
         },
-        height: 60,
+        height: 50,
         color: widget.color,
         minWidth: double.maxFinite,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
         child: GetText(
-            fontSize: 20.0,
+            fontSize: 18.0,
             color: Colors.white,
             centerAlign: true,
             text: widget.text),
