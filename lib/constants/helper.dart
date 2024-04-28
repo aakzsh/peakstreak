@@ -22,7 +22,7 @@ class Helper{
   static const newChallenge1 = "New ";
   static const newChallenge2 = "Challenge";
   static const newChallenge = "New Challenge";
-  static const challengeNickname = "Challenge Name";
+  static const challengeNickname = "Challenge Nickname";
   static const addTasks = "Add Tasks";
   static const numberOfDays = "Number of Days";
   static const create = "Create!";

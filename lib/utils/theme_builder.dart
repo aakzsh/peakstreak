@@ -6,7 +6,8 @@ ThemeData buildTheme(brightness) {
     brightness: brightness,
     fontFamily: "KronaOne",
     colorScheme:const ColorScheme.dark(background: AppColors.bg),
-    scaffoldBackgroundColor: AppColors.bg
+    scaffoldBackgroundColor: AppColors.bg,
+    primarySwatch: Colors.red,
   );
   return baseTheme.copyWith();
 }
