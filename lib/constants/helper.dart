@@ -1,0 +1,32 @@
+class Helper{
+  static const title1 = "Peak";
+  static const title2 = "Streak";
+  static const title = "PeakStreak";
+  static const subtitle1 = "Take a ";
+  static const subtitle2 = "100 days challenge ";
+  static const subtitle3 = "to change yourself for better!";
+  static const getBetter = "Get Better!";
+  static const noChallengeSet1 = "No";
+  static const noChallengeSet2 = " Challenge Set!";
+  static const noChallengeSet = "No Challenge Set!";
+  static const createOneNow = "Create One Now!";
+  static const hash = "#";
+  static const tasksRemaining = " tasks remaining. You can do it!";
+  static const streakChart = "Streak Chart";
+  static const deleteChallenge = "Delete Challenge!";
+  static const doneForTheDay = "done for the day! sit and relaxx..";
+  static const update = "Update";
+  static const lastDayDone = "🎉 Last Day Done, and Dusted! 🎉";
+  static const downloadReport = "Download Report";
+  static const createNewChallenge = "Create New Challenge";
+  static const newChallenge1 = "New ";
+  static const newChallenge2 = "Challenge";
+  static const newChallenge = "New Challenge";
+  static const challengeNickname = "Challenge Name";
+  static const addTasks = "Add Tasks";
+  static const numberOfDays = "Number of Days";
+  static const create = "Create!";
+  static const created = "Created!";
+  static const hopingLuck = "Hoping you great luck and endurance to complete your challenge";
+  static const redirectingYouIn = "redirecting you in ";
+}
