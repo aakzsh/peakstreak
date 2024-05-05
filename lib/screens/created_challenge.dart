@@ -16,11 +16,11 @@ class CreatedChallenge extends StatefulWidget {
 
 class _CreatedChallengeState extends State<CreatedChallenge> {
   int seconds = 3;
-  Duration _duration = Duration(seconds: 3);
+  Duration _duration = const Duration(seconds: 3);
   // Define a Timer object
   Timer? _timer;
 
-  Duration _gradientDuration = Duration(seconds: 3);
+  Duration _gradientDuration = const Duration(seconds: 3);
   // Define a Timer object
   Timer? _gradientTimer;
   double percent = 0;
@@ -41,14 +41,14 @@ class _CreatedChallengeState extends State<CreatedChallenge> {
   }
 
   void startTimer() {
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_duration.inSeconds <= 0) {
         Navigator.pushAndRemoveUntil(context,
-            MaterialPageRoute(builder: (context) => Home()), (route) => false);
+            MaterialPageRoute(builder: (context) => const Home()), (route) => false);
       } else {
         setState(() {
           seconds = _duration.inSeconds;
-          _duration = _duration - Duration(seconds: 1);
+          _duration = _duration - const Duration(seconds: 1);
         });
       }
     });
@@ -102,7 +102,7 @@ class _CreatedChallengeState extends State<CreatedChallenge> {
                         percent
                       ]),
                   borderRadius: BorderRadius.circular(10)),
-              child: Center(child: Text(Helper.redirectingYouIn + "$seconds")),
+              child: Center(child: Text("${Helper.redirectingYouIn}$seconds")),
             ),
           ),
         ],

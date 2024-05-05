@@ -35,7 +35,7 @@ class _WelcomeState extends State<Welcome> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(),
+          const SizedBox(),
           Column(
             children: [
               Image.asset(

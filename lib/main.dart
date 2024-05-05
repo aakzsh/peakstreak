@@ -18,7 +18,7 @@ Future<bool> _authenticateUser() async {
 
   if (canAuthenticate) {
     return await authService.authenticate(
-        localizedReason: "Please Authenticate to use APP");
+        localizedReason: "Verify to use PeakStreak",);
   }
   return true;
 }

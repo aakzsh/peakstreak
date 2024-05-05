@@ -16,10 +16,9 @@ class NewChallenge extends StatefulWidget {
 }
 
 class _NewChallengeState extends State<NewChallenge> {
-  TextEditingController _nicknameController = TextEditingController();
-  TextEditingController _numdayController = TextEditingController();
-  List<TextEditingController> _taskControllers = [];
-
+  final TextEditingController _nicknameController = TextEditingController();
+  final TextEditingController _numdayController = TextEditingController();
+  List<String> tasks = [""];
   Future<Map<String, dynamic>> validate() async {
     Map<String, dynamic> result = {};
     if (_nicknameController.text.isEmpty) {
@@ -31,6 +30,11 @@ class _NewChallengeState extends State<NewChallenge> {
         int.parse(_numdayController.text) < 1) {
       result['success'] = false;
       result['message'] = "Number of days can't be blank or less than 1!";
+      return result;
+    }
+    if(tasks.contains("") || tasks.contains(" ") || tasks.isEmpty){
+      result['success'] = false;
+      result['message'] = "tasks can't be blank!";
       return result;
     }
     result["success"] = true;
@@ -46,7 +50,7 @@ class _NewChallengeState extends State<NewChallenge> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
+          const Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
@@ -64,7 +68,7 @@ class _NewChallengeState extends State<NewChallenge> {
                   text: Helper.newChallenge2),
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
           Expanded(
@@ -74,7 +78,7 @@ class _NewChallengeState extends State<NewChallenge> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Align(
+                    const Align(
                       alignment: Alignment.centerLeft,
                       child: GetText(
                           fontSize: 10.0,
@@ -82,7 +86,7 @@ class _NewChallengeState extends State<NewChallenge> {
                           centerAlign: false,
                           text: Helper.challengeNickname),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     Container(
@@ -94,7 +98,7 @@ class _NewChallengeState extends State<NewChallenge> {
                       child: Center(
                           child: TextField(
                         controller: _nicknameController,
-                        decoration: InputDecoration.collapsed(
+                        decoration: const InputDecoration.collapsed(
                           hintText: "",
                           hintStyle: TextStyle(
                             fontSize: 12,
@@ -102,10 +106,10 @@ class _NewChallengeState extends State<NewChallenge> {
                         ),
                       )),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 30,
                     ),
-                    Align(
+                    const Align(
                       alignment: Alignment.centerLeft,
                       child: GetText(
                           fontSize: 10.0,
@@ -113,7 +117,7 @@ class _NewChallengeState extends State<NewChallenge> {
                           centerAlign: false,
                           text: Helper.numberOfDays),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     Container(
@@ -125,7 +129,7 @@ class _NewChallengeState extends State<NewChallenge> {
                       child: Center(
                           child: TextField(
                         controller: _numdayController,
-                        decoration: InputDecoration.collapsed(
+                        decoration: const InputDecoration.collapsed(
                           hintText: "",
                           hintStyle: TextStyle(
                             fontSize: 12,
@@ -153,14 +157,14 @@ class _NewChallengeState extends State<NewChallenge> {
                     ),
                     Column(
                       children: List.generate(
-                        count,
+                        tasks.length,
                         (index) => Padding(
                           padding: const EdgeInsets.symmetric(vertical: 10),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Container(
-                                width: w - 90,
+                                width: index==tasks.length-1?w - 90:w-40,
                                 height: 50,
                                 decoration: BoxDecoration(
                                     border: Border.all(
@@ -168,43 +172,45 @@ class _NewChallengeState extends State<NewChallenge> {
                                     borderRadius: BorderRadius.circular(5)),
                                 child: Center(
                                     child: TextField(
-                                  decoration: InputDecoration.collapsed(
+                                      onChanged: (val){
+                                        setState(() {
+                                          tasks[index] = val;
+                                        });
+                                      },
+                                  decoration: const InputDecoration.collapsed(
                                     hintText: "",
                                     hintStyle: TextStyle(
                                       fontSize: 12,
                                     ),
                                   ),
-                                  keyboardType: TextInputType.number,
-                                  inputFormatters: <TextInputFormatter>[
-                                    FilteringTextInputFormatter.digitsOnly,
-                                  ],
                                 )),
                               ),
-                              index == count - 1
-                                  ? IconButton(
+                              (index==tasks.length-1)?IconButton(
                                       onPressed: () {
                                         setState(() {
-                                          count++;
+                                          // tasks.pop(tasks[index]);
+                                          tasks.removeLast();
                                         });
                                       },
-                                      icon: Icon(
-                                        Icons.add,
-                                        color: AppColors.brightgreen,
-                                      ))
-                                  : IconButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          count--;
-                                        });
-                                      },
-                                      icon: Icon(
+                                      icon: const Icon(
                                         Icons.remove,
                                         color: AppColors.brightred,
-                                      ))
+                                      )): const SizedBox()
                             ],
                           ),
                         ),
                       ),
+                    ),
+                    const SizedBox(height: 10,),
+                    MaterialButton(onPressed: (){
+                      setState(() {
+                        tasks.add("");
+                      });
+                    },
+                    minWidth: double.maxFinite,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                    color: AppColors.dullgreen,
+                    child: const Text("Add More"),
                     )
                   ],
                 ),
@@ -217,17 +223,18 @@ class _NewChallengeState extends State<NewChallenge> {
               onPressed: () async {
                 var res = await validate();
                 if (!res["success"]) {
+                  if(!mounted) return;
                   showDialog(
                       context: context,
                       builder: (context) => AlertDialog(
-                            title: Text("Alert!"),
+                            title: const Text("Alert!"),
                             content: Text(res["message"]),
                           ));
                 } else {
                   var data = {
                     "challengeName": _nicknameController.text,
                     "challengeDays": _numdayController.text,
-                    "challengeArray": ["xyz"]
+                    "challengeArray": tasks,
                   };
                   var settingResult = await setNewChallenge(data);
                   if (settingResult) {
@@ -235,11 +242,11 @@ class _NewChallengeState extends State<NewChallenge> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => CreatedChallenge()));
+                            builder: (context) => const CreatedChallenge()));
                   }
                 }
               }),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
         ],
