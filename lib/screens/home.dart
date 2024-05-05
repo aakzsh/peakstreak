@@ -5,6 +5,7 @@ import 'package:peakstreak/constants/colors.dart';
 import 'package:peakstreak/constants/helper.dart';
 import 'package:peakstreak/screens/new_challenge.dart';
 import 'package:peakstreak/screens/welcome.dart';
+import 'package:peakstreak/services/api/save_report.dart';
 import 'package:peakstreak/services/sharedpreferences/delete_challenge.dart';
 import 'package:peakstreak/services/sharedpreferences/get_challenge_active.dart';
 import 'package:peakstreak/services/sharedpreferences/get_challenge_name.dart';
@@ -31,6 +32,7 @@ class _HomeState extends State<Home> {
   String challengeName = "";
   List<String> todaysTasks = [];
   int totalDays = 0;
+  List<String> challengeProgressLocal = [];
 
 
   getTotalDaysData()async{
@@ -47,10 +49,17 @@ class _HomeState extends State<Home> {
     });
     var challengeTasks = await getChallengeTasks();
     var challengeProgress = await getChallengeProgress();
+    // log("progress is " + challengeProgress.toString());
     if(challengeProgress.length<differenceDays+1){
+      // log("went inside");
       List<String> temporary =  List.filled(challengeTasks.length, "0");
       challengeProgress.add(temporary.toString());
+      // log("now it iss" + challengeProgress.toString());
       setChallengeProgress(challengeProgress);
+      setState(() {
+        challengeProgressLocal = challengeProgress;
+      });
+      // log("i is " + challengeProgressLocal.toString());
     }
     if(challengeProgress.last.length<3){
     challengeProgress[challengeProgress.length-1] = challengeProgress[challengeProgress.length-1].replaceAll('[', '').replaceAll(']', '');
@@ -58,6 +67,9 @@ class _HomeState extends State<Home> {
     elements = List.filled(challengeTasks.length, "0");
     challengeProgress[challengeProgress.length-1] = elements.toString();
     setChallengeProgress(challengeProgress);
+    setState(() {
+        challengeProgressLocal = challengeProgress;
+      });
     }
 
     String todayTemp = challengeProgress[challengeProgress.length-1].replaceAll('[', '').replaceAll(']', '');
@@ -65,6 +77,11 @@ class _HomeState extends State<Home> {
       allTasks = challengeTasks;
       todaysTasks = todayTemp.split(', ');
     });
+      setState(() {
+        challengeProgressLocal = challengeProgress;
+      });
+
+    return true;
   }
 
   updateChallengeData(newdata)async{
@@ -75,7 +92,7 @@ class _HomeState extends State<Home> {
 
   getDayIndex() async {
     var startDay = await getChallengeStart();
-    var today = DateTime.now();
+    var today = DateTime.now().add(Duration(days: 0));
     int difference = today.difference(DateTime.parse(startDay)).inDays;
     // print("difference is $difference");
     setState(() {
@@ -89,8 +106,8 @@ class _HomeState extends State<Home> {
       isChallengeActive = isActive;
     });
     if (isActive) {
-      await getChallengeData();
       await getDayIndex();
+      await getChallengeData();
     }
   }
 
@@ -120,7 +137,7 @@ class _HomeState extends State<Home> {
                 child: Column(
                   children: [
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(
                           width: 20,
@@ -130,11 +147,17 @@ class _HomeState extends State<Home> {
                             color: Colors.white,
                             centerAlign: false,
                             text: Helper.hash),
-                        GetText(
-                            fontSize: 20.0,
-                            color: AppColors.brightred,
-                            centerAlign: false,
-                            text: " $challengeName")
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        Container(
+                          width: w - 60,
+                          child: GetText(
+                              fontSize: 20.0,
+                              color: AppColors.brightred,
+                              centerAlign: false,
+                              text: "$challengeName"),
+                        )
                       ],
                     ),
                     const SizedBox(
@@ -155,7 +178,7 @@ class _HomeState extends State<Home> {
                     ),
                     Container(
                       width: w - 40,
-                      height: 80,
+                      height: todaysTasks.length*25,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
                         color: Colors.white10,
@@ -195,7 +218,7 @@ class _HomeState extends State<Home> {
                               centerAlign: false,
                               text: 
                               todaysTasks.where((element) => element == "0").isEmpty?
-                             totalDays!=differenceDays+1? "🎉 Last Day Done, and Dusted! 🎉":  "done for the day! sit and relaxx..":
+                             totalDays==differenceDays+1? "🎉 Last Day Done, and Dusted! 🎉":  "done for the day! sit and relaxx..":
                               "${todaysTasks.where((element) => element == "0").length}/${todaysTasks.length} tasks remaining. You can do it!"
                               )),
                     ),
@@ -215,35 +238,95 @@ class _HomeState extends State<Home> {
                     const SizedBox(
                       height: 10,
                     ),
-                    Padding(
+
+                 Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: SizedBox(
                           height: 100,
                           width: w - 40,
                           child: GridView.builder(
-                            itemCount: differenceDays+1,
+                            itemCount: totalDays,
                             gridDelegate:
                                 const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 10,
                             ),
                             itemBuilder: (BuildContext context, int index) {
-                            
+                              log("it isss");
+                              log(challengeProgressLocal.toString());
+                              // List<String> thatDayTasks = ;
+
                               return Padding(
                                 padding: const EdgeInsets.all(3.0),
                                 child: Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(5),
-                                    color: todaysTasks.contains("0")?AppColors.brightred:AppColors.brightgreen, // Change color based on contributions
+                                    color: 
+                                    index==differenceDays?
+                                    (todaysTasks.contains("0")?AppColors.brightred:AppColors.brightgreen):
+                                   (
+                                    index>differenceDays?(const Color.fromARGB(255, 41, 41, 41)):(challengeProgressLocal[index].replaceAll("[", "").replaceAll("]", "").split(", ").contains("0")?AppColors.brightred:AppColors.brightgreen)
+                                   )
                                   ),
                                 ),
                               );
                             },
                           ),
                         )),
+
+                 
                     const SizedBox(
                       height: 40,
                     ),
-                    CustomButton(
+                    totalDays==differenceDays+1?Column(
+
+                      children: [CustomButton(
+                        text: Helper.downloadReport,
+                        color: AppColors.dullgreen,
+                        onPressed: () async {
+                          String content = "";
+                          for(int i=0;i<totalDays;i++){
+                            String mid = "Day ${i+1}: ${challengeProgressLocal[i].replaceAll("0", "Failed").replaceAll("1", "Passed")}";
+                            content += mid += "\n";
+                          }
+                          await downloadString(content, "report.txt");
+                        }),
+                        CustomButton(
+                        text: Helper.createNewChallenge,
+                        color: AppColors.dullred,
+                        onPressed: () async {
+                          showDialog(
+                              context: context,
+                              builder: (context) => Dialog(
+                                    backgroundColor: AppColors.bg,
+                                    child: SizedBox(
+                                      height: 150,
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        children: [
+                                          const Text("Are you sure?"),
+                                          CustomButton(
+                                              text: "Yes",
+                                              color: AppColors.dullred,
+                                              onPressed: () async {
+                                                var res =
+                                                    await deleteChallenge();
+                                                log("deleted: ${res.toString()}");
+                                                if (!mounted) return;
+                                                Navigator.pushAndRemoveUntil(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            const Welcome()),
+                                                    (route) => false);
+                                              })
+                                        ],
+                                      ),
+                                    ),
+                                  ));
+                        })
+                        ],
+                    ):CustomButton(
                         text: Helper.deleteChallenge,
                         color: AppColors.dullred,
                         onPressed: () async {
