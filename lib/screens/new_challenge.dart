@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:peakstreak/constants/colors.dart';
@@ -237,6 +239,9 @@ class _NewChallengeState extends State<NewChallenge> {
                     "challengeArray": tasks,
                   };
                   var settingResult = await setNewChallenge(data);
+                  log("heré");
+                  // await NotificationService().scheduleNotification(body: "Complete your tasks before the time runs out", title: "Tasks Reminder!");
+                  
                   if (settingResult) {
                     if(!mounted) return;
                     Navigator.push(

@@ -1,11 +1,12 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 
 
 Future<void> downloadString(String content, String fileName) async {
   final file = await writeFile(content);
-  print('File saved to: ${file.path}');
+  log('File saved to: ${file.path}');
 }
 
 Future<String> get _localPath async {
@@ -15,7 +16,7 @@ Future<String> get _localPath async {
 
 Future<File> get _localFile async {
   final path = await _localPath;
-  return File('$path/your_file_name.txt');
+  return File('$path/report.txt');
 }
 
 Future<File> writeFile(String content) async {

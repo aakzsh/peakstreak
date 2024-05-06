@@ -6,6 +6,8 @@ import 'package:local_auth/local_auth.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   bool authenticated = await _authenticateUser();
+  // NotificationService().initNotification();
+  // tz.initializeTimeZones();
   runApp(App(authenticated: authenticated));
 }
 
@@ -23,10 +25,21 @@ Future<bool> _authenticateUser() async {
   return true;
 }
 
-class App extends StatelessWidget {
+class App extends StatefulWidget {
   const App({super.key, required this.authenticated});
   final bool authenticated;
 
+  @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+
+  @override
+  void initState(){
+    super.initState();
+    
+  }
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

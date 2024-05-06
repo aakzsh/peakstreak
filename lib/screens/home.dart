@@ -1,8 +1,10 @@
-import 'dart:developer';
+import 'dart:developer' as dev; 
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:peakstreak/constants/colors.dart';
 import 'package:peakstreak/constants/helper.dart';
+import 'package:peakstreak/screens/edit_challenge.dart';
 import 'package:peakstreak/screens/new_challenge.dart';
 import 'package:peakstreak/screens/welcome.dart';
 import 'package:peakstreak/services/api/save_report.dart';
@@ -92,7 +94,7 @@ class _HomeState extends State<Home> {
 
   getDayIndex() async {
     var startDay = await getChallengeStart();
-    var today = DateTime.now().add(Duration(days: 0));
+    var today = DateTime.now();
     int difference = today.difference(DateTime.parse(startDay)).inDays;
     // print("difference is $difference");
     setState(() {
@@ -150,13 +152,13 @@ class _HomeState extends State<Home> {
                         const SizedBox(
                           width: 5,
                         ),
-                        Container(
+                        SizedBox(
                           width: w - 60,
                           child: GetText(
                               fontSize: 20.0,
                               color: AppColors.brightred,
                               centerAlign: false,
-                              text: "$challengeName"),
+                              text: challengeName),
                         )
                       ],
                     ),
@@ -178,7 +180,7 @@ class _HomeState extends State<Home> {
                     ),
                     Container(
                       width: w - 40,
-                      height: todaysTasks.length*25,
+                      height: todaysTasks.length*25 > 60 ? todaysTasks.length*25 : 60,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
                         color: Colors.white10,
@@ -238,11 +240,10 @@ class _HomeState extends State<Home> {
                     const SizedBox(
                       height: 10,
                     ),
-
                  Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: SizedBox(
-                          height: 100,
+                          height: max(35*(totalDays/10) + 30, 100),
                           width: w - 40,
                           child: GridView.builder(
                             itemCount: totalDays,
@@ -251,21 +252,28 @@ class _HomeState extends State<Home> {
                               crossAxisCount: 10,
                             ),
                             itemBuilder: (BuildContext context, int index) {
-                              log("it isss");
-                              log(challengeProgressLocal.toString());
+                              // dev.log("it isss");
+                              // dev.log(challengeProgressLocal.toString());
                               // List<String> thatDayTasks = ;
 
                               return Padding(
                                 padding: const EdgeInsets.all(3.0),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5),
-                                    color: 
-                                    index==differenceDays?
-                                    (todaysTasks.contains("0")?AppColors.brightred:AppColors.brightgreen):
-                                   (
-                                    index>differenceDays?(const Color.fromARGB(255, 41, 41, 41)):(challengeProgressLocal[index].replaceAll("[", "").replaceAll("]", "").split(", ").contains("0")?AppColors.brightred:AppColors.brightgreen)
-                                   )
+                                child: GestureDetector(
+                                  onTap: (){
+                                    if(index<differenceDays+1){
+                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>EditChallenge(index: index, tasks: challengeProgressLocal[index].replaceAll("[", "").replaceAll("]", "").split(", "), data: challengeProgressLocal, allTasks: allTasks)));
+                                    }
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5),
+                                      color: 
+                                      index==differenceDays?
+                                      (todaysTasks.contains("0")?AppColors.brightred:AppColors.brightgreen):
+                                     (
+                                      index>differenceDays?(const Color.fromARGB(255, 41, 41, 41)):(challengeProgressLocal[index].replaceAll("[", "").replaceAll("]", "").split(", ").contains("0")?AppColors.brightred:AppColors.brightgreen)
+                                     )
+                                    ),
                                   ),
                                 ),
                               );
@@ -311,7 +319,8 @@ class _HomeState extends State<Home> {
                                               onPressed: () async {
                                                 var res =
                                                     await deleteChallenge();
-                                                log("deleted: ${res.toString()}");
+                                                dev.log("deleted: ${res.toString()}");
+                                                // await NotificationService().cancelAllNotifs();
                                                 if (!mounted) return;
                                                 Navigator.pushAndRemoveUntil(
                                                     context,
@@ -347,7 +356,8 @@ class _HomeState extends State<Home> {
                                               onPressed: () async {
                                                 var res =
                                                     await deleteChallenge();
-                                                log("deleted: ${res.toString()}");
+                                                dev.log("deleted: ${res.toString()}");
+                                                // await NotificationService().cancelAllNotifs();
                                                 if (!mounted) return;
                                                 Navigator.pushAndRemoveUntil(
                                                     context,
