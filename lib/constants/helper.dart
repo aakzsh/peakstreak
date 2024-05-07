@@ -11,7 +11,7 @@ class Helper{
   static const noChallengeSet = "No Challenge Set!";
   static const createOneNow = "Create One Now!";
   static const hash = "#";
-  static const tasksRemaining = " tasks remaining. You can do it!";
+  static const tasksRemaining = "tasks remaining. You can do it!";
   static const streakChart = "Streak Chart";
   static const deleteChallenge = "Delete Challenge!";
   static const doneForTheDay = "done for the day! sit and relaxx..";
@@ -29,4 +29,6 @@ class Helper{
   static const created = "Created!";
   static const hopingLuck = "Hoping you great luck and endurance to complete your challenge";
   static const redirectingYouIn = "redirecting you in ";
+  static const areYouSure = "Are you sure?";
+  static const yes = "Yes";
 }
